@@ -1,6 +1,33 @@
 // theme.ts
+import { useColorScheme } from "react-native";
 
-export const lightTheme = {
+// 1. Create a Theme type
+export type Theme = {
+  colors: {
+    background: string;
+    card: string;
+    primary: string;
+    text: string;
+    subtitle: string;
+    border: string;
+    inputBg: string;
+  };
+  spacing: {
+    xs: number;
+    sm: number;
+    md: number;
+    lg: number;
+    xl: number;
+  };
+  radius: {
+    sm: number;
+    md: number;
+    lg: number;
+  };
+};
+
+// 2. Build typed themes using the Theme type
+export const lightTheme: Theme = {
   colors: {
     background: "#F2F2F2",
     card: "#FFFFFF",
@@ -24,7 +51,7 @@ export const lightTheme = {
   },
 };
 
-export const darkTheme = {
+export const darkTheme: Theme = {
   colors: {
     background: "#000000",
     card: "#1A1A1A",
@@ -48,10 +75,29 @@ export const darkTheme = {
   },
 };
 
-// Optional — for easy imports throughout app
-// export const theme = {
-//   light: lightTheme,
-//   dark: darkTheme,
-// };
+// (Optional) Exporting both themes together
+export const theme = {
+  light: lightTheme,
+  dark: darkTheme,
+};
 
-export default lightTheme
+// // 3. Typed hook that returns the correct theme
+// export function useTheme(makeStyles?: (theme: Theme) => any) {
+//   const scheme = useColorScheme();
+//   const theme = scheme === "dark" ? darkTheme : lightTheme;
+
+//   // If caller passed makeStyles, generate styles
+//   const styles = makeStyles ? makeStyles(theme) : undefined;
+
+//   return { theme, styles };
+// }
+
+export function useTheme<T>(makeStyles: (theme: Theme) => T) {
+  const scheme = useColorScheme();
+  const theme = scheme === "dark" ? darkTheme : lightTheme;
+  const styles = makeStyles(theme);
+  return { theme, styles };
+}
+
+// 4. Default export for convenience
+export default lightTheme;
