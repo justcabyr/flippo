@@ -1,7 +1,7 @@
+import theme from "@/constants/theme";
 import { Link } from "expo-router";
 import { useState } from "react";
 import { StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
-import { theme } from "@/constants/theme";
 
 export default function Index() {
   const [email, setEmail] = useState("");
