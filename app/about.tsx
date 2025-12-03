@@ -1,21 +1,11 @@
-import { Link } from "expo-router";
-import { StyleSheet, Text, View } from "react-native";
+import Screen from "@/components/Screen";
+import { Title } from "@/components/Typography";
 
 export default function Index() {
   return (
-    <View style={styles.container}>
-      <Text>About screen</Text>
-      <Link href="/">Home</Link>
-      <Link href="/profile">Profile</Link>
-    </View>
+    <Screen>
+      <Title>About Page</Title>
+    </Screen>
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "orange",
-  },
-});
