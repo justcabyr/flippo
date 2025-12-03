@@ -1,6 +1,7 @@
 import { Link } from "expo-router";
 import { useState } from "react";
 import { StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { theme } from "@/constants/theme";
 
 export default function Index() {
   const [email, setEmail] = useState("");
@@ -19,7 +20,7 @@ export default function Index() {
 
         <TextInput
           placeholder="Email"
-          placeholderTextColor="#888"
+          placeholderTextColor={theme.colors.subtitle}
           style={styles.input}
           keyboardType="email-address"
           value={email}
@@ -28,7 +29,7 @@ export default function Index() {
 
         <TextInput
           placeholder="Password"
-          placeholderTextColor="#888"
+          placeholderTextColor={theme.colors.subtitle}
           secureTextEntry
           style={styles.input}
           value={password}
@@ -57,14 +58,14 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#f2f2f2",
-    paddingHorizontal: 20,
+    backgroundColor: theme.colors.background,
+    paddingHorizontal: theme.spacing.lg,
   },
   formCard: {
     width: "100%",
-    backgroundColor: "#fff",
-    padding: 25,
-    borderRadius: 12,
+    backgroundColor: theme.colors.card,
+    padding: theme.spacing.xl,
+    borderRadius: theme.radius.lg,
     shadowColor: "#000",
     shadowOpacity: 0.1,
     shadowRadius: 10,
@@ -74,32 +75,33 @@ const styles = StyleSheet.create({
     fontSize: 28,
     fontWeight: "700",
     textAlign: "center",
-    marginBottom: 6,
+    marginBottom: theme.spacing.xs,
+    color: theme.colors.text,
   },
   subtitle: {
     fontSize: 15,
-    color: "#555",
+    color: theme.colors.subtitle,
     textAlign: "center",
-    marginBottom: 25,
+    marginBottom: theme.spacing.xl,
   },
   input: {
     width: "100%",
-    backgroundColor: "#f4f4f4",
-    paddingHorizontal: 15,
+    backgroundColor: theme.colors.inputBg,
+    paddingHorizontal: theme.spacing.md,
     height: 50,
-    borderRadius: 10,
+    borderRadius: theme.radius.md,
     fontSize: 16,
-    marginBottom: 15,
+    marginBottom: theme.spacing.md,
     borderWidth: 1,
-    borderColor: "#ddd",
+    borderColor: theme.colors.border,
   },
   button: {
-    backgroundColor: "#007AFF",
+    backgroundColor: theme.colors.primary,
     height: 50,
-    borderRadius: 10,
+    borderRadius: theme.radius.md,
     justifyContent: "center",
     alignItems: "center",
-    marginTop: 5,
+    marginTop: theme.spacing.sm,
   },
   buttonText: {
     color: "#fff",
@@ -109,11 +111,11 @@ const styles = StyleSheet.create({
   linksRow: {
     flexDirection: "row",
     justifyContent: "center",
-    marginTop: 20,
+    marginTop: theme.spacing.lg,
   },
   link: {
-    color: "#007AFF",
-    marginHorizontal: 12,
+    color: theme.colors.primary,
+    marginHorizontal: theme.spacing.md,
     fontSize: 15,
   },
 });
