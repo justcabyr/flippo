@@ -2,11 +2,11 @@ import { Text, StyleSheet } from "react-native";
 import { Link as ExpoLink, LinkProps } from "expo-router";
 import { useTheme, Theme } from "@/constants/theme";
 
-export default function Link({ href, children, style }: LinkProps) {
+export default function Link({ children, ...props }: LinkProps) {
   const { styles } = useTheme(makeStyles);
 
   return (
-    <ExpoLink href={href} style={[styles.link, style]}>
+    <ExpoLink {...props} style={[styles.link, props.style]}>
       <Text style={[styles.linkText]}>{children}</Text>
     </ExpoLink>
   );
