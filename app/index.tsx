@@ -1,9 +1,4 @@
-import Button from "@/components/Button";
-import Card from "@/components/Card";
-import Input from "@/components/Input";
-import Link from "@/components/Link";
-import Screen from "@/components/Screen";
-import { Subtitle, Title } from "@/components/Typography";
+import { Button, Card, Input, Link, Screen, Subtitle, Title } from "@/components/ui";
 import { Theme, useTheme } from "@/constants/theme";
 import { useState } from "react";
 import { StyleSheet, View } from "react-native";
