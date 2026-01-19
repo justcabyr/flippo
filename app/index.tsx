@@ -2,27 +2,21 @@ import { Button, Card, Input, Link, Screen, Subtitle, Title } from "@/components
 import { Theme, useTheme } from "@/constants/theme";
 import { useState } from "react";
 import { StyleSheet, View } from "react-native";
-
-type User = { email: string };
+import { useAuth } from "@/contexts/AuthContext";
 
 export default function Index() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  // 1. Create the user session variable
-  const [user, setUser] = useState<User | null>(null);
-
+  
+  const { user, login, logout } = useAuth(); // Use the context hook
   const { styles } = useTheme(makeStyles);
 
   const handleLogin = () => {
-    // 2. Simple login logic
-    if (email && password) {
-      setUser({ email });
-    }
+    if (email && password) login(email);
   };
 
   const handleLogout = () => {
-    // 3. Simple logout logic
-    setUser(null);
+    logout();
     setEmail("");
     setPassword("");
   };
@@ -32,37 +26,19 @@ export default function Index() {
       <Card>
         {!user ? (
           <>
-            <Title>{"Welcome Back"}</Title>
-            <Subtitle>{"Please log in to continue"}</Subtitle>
-
-            <Input
-              placeholder="Email"
-              keyboardType="email-address"
-              value={email}
-              onChangeText={setEmail}
-            />
-            <Input
-              placeholder="Password"
-              secureTextEntry
-              value={password}
-              onChangeText={setPassword}
-            />
+            <Title>Welcome Back</Title>
+            <Subtitle>Please log in to continue</Subtitle>
+            <Input placeholder="Email" value={email} onChangeText={setEmail} />
+            <Input placeholder="Password" secureTextEntry value={password} onChangeText={setPassword} />
             <Button title="Login" onPress={handleLogin} />
-
-            <View style={styles.linksRow}>
-              <Link href="/about">About</Link>
-            </View>
+            <View style={styles.linksRow}><Link href="/about">About</Link></View>
           </>
         ) : (
           <>
             <Title>{`Hello, ${user.email}`}</Title>
-            <Subtitle>{"You are logged in"}</Subtitle>
-
+            <Subtitle>You are logged in</Subtitle>
             <Button title="Logout" onPress={handleLogout} />
-
-            <View style={styles.linksRow}>
-              <Link href="/profile">Profile</Link>
-            </View>
+            <View style={styles.linksRow}><Link href="/profile">Profile</Link></View>
           </>
         )}
       </Card>
@@ -70,12 +46,6 @@ export default function Index() {
   );
 }
 
-const makeStyles = (theme: Theme) =>
-  StyleSheet.create({
-    linksRow: {
-      flexDirection: "row",
-      gap: 10, // Added gap for spacing
-      justifyContent: "center",
-      marginTop: theme.spacing.lg,
-    },
-  });
+const makeStyles = (theme: Theme) => StyleSheet.create({
+  linksRow: { flexDirection: "row", gap: 10, justifyContent: "center", marginTop: theme.spacing.lg },
+});
