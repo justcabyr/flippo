@@ -20,7 +20,6 @@ export default function Index() {
         <Button title="Logout" onPress={handleLogout} />
         <View style={styles.linksRow}>
           <Link href="/profile">Profile</Link>
-          <Link href="/about">About</Link>
         </View>
       </Card>
     </Screen>

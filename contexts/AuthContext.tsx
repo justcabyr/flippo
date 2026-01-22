@@ -1,4 +1,6 @@
-import { createContext, ReactNode, useContext, useState } from "react";
+import * as SecureStore from 'expo-secure-store';
+import { createContext, ReactNode, useContext, useState } from 'react';
+console.log(SecureStore);
 
 type User = { email: string };
 
@@ -16,16 +18,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const login = (email: string) => setUser({ email });
   const logout = () => setUser(null);
 
-  return (
-    <AuthContext.Provider value={{ user, login, logout }}>
-      {children}
-    </AuthContext.Provider>
-  );
+  return <AuthContext.Provider value={{ user, login, logout }}>{children}</AuthContext.Provider>;
 }
 
 // Custom hook for cleaner imports in your components
 export const useAuth = () => {
   const context = useContext(AuthContext);
-  if (!context) throw new Error("useAuth must be used within an AuthProvider");
+  if (!context) throw new Error('useAuth must be used within an AuthProvider');
   return context;
 };
