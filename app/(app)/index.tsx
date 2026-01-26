@@ -1,15 +1,18 @@
-import { Button, Card, Link, Screen, Subtitle, Title } from '@/components/ui';
-import { Theme, useTheme } from '@/constants/theme';
-import { useAuth } from '@/contexts/AuthContext';
-import { StyleSheet, View } from 'react-native';
+import { Button, Card, Link, Screen, Subtitle, Title } from "@/components/ui";
+import { Theme, useTheme } from "@/constants/theme";
+import { useAuth } from "@/contexts/AuthContext";
+import { StyleSheet, View, Alert } from "react-native";
 
 export default function Index() {
-
-  const { user, logout } = useAuth(); // Use the context hook
+  const { user, logout } = useAuth();
   const { styles } = useTheme(makeStyles);
 
-  const handleLogout = () => {
-    logout();
+  const handleLogout = async () => {
+    try {
+      await logout(); // Now returns a Promise
+    } catch (error: any) {
+      Alert.alert("Logout Error", error.message);
+    }
   };
 
   return (
@@ -28,5 +31,10 @@ export default function Index() {
 
 const makeStyles = (theme: Theme) =>
   StyleSheet.create({
-    linksRow: { flexDirection: 'row', gap: 10, justifyContent: 'center', marginTop: theme.spacing.lg },
+    linksRow: {
+      flexDirection: "row",
+      gap: 10,
+      justifyContent: "center",
+      marginTop: theme.spacing.lg,
+    },
   });
