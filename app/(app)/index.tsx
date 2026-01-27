@@ -1,7 +1,7 @@
 import { Button, Card, Link, Screen, Subtitle, Title } from "@/components/ui";
 import { Theme, useTheme } from "@/constants/theme";
 import { useAuth } from "@/contexts/AuthContext";
-import { StyleSheet, View, Alert } from "react-native";
+import { Alert, StyleSheet, View } from "react-native";
 
 export default function Index() {
   const { user, logout } = useAuth();
@@ -18,7 +18,7 @@ export default function Index() {
   return (
     <Screen>
       <Card>
-        <Title>{`Hello, ${user!.email}`}</Title>
+        <Title>{`Hello, ${user!.name}`}</Title>
         <Subtitle>You are logged in</Subtitle>
         <Button title="Logout" onPress={handleLogout} />
         <View style={styles.linksRow}>
