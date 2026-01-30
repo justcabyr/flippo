@@ -5,9 +5,9 @@ import { useState } from "react";
 import { Alert, StyleSheet, View } from "react-native";
 
 export default function Signup() {
-  const [email, setEmail] = useState("");
-  const [name, setName] = useState("");
-  const [password, setPassword] = useState("");
+  const [email, setEmail] = useState("test@test.com");
+  const [password, setPassword] = useState("password");
+  const [name, setName] = useState("Test");
 
   const { signup } = useAuth();
   const { styles } = useTheme(makeStyles);

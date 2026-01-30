@@ -1,6 +1,7 @@
 import { Button, Card, Input, Link, Screen, Subtitle, Title } from "@/components/ui";
 import { Theme, useTheme } from "@/constants/theme";
 import { useAuth } from "@/contexts/AuthContext";
+import { supabase } from "@/lib/supabase";
 import { useState } from "react";
 import { Alert, StyleSheet, View } from "react-native";
 
@@ -22,6 +23,13 @@ export default function Index() {
     }
   };
 
+    const fetchtMovies = async () => {
+      // const { data, error } = await supabase.from("movies").select().eq("id", 3).single();
+      const { data, error } = await supabase.from("movies").select();
+      console.log(data);
+      if (error) console.error(error);
+    };
+
   return (
     <Screen>
       <Card>
@@ -38,7 +46,7 @@ export default function Index() {
         <Input placeholder="Password" secureTextEntry value={password} onChangeText={setPassword} />
 
         <Button title="Login" onPress={handleLogin} />
-
+        <Button title="Fetch movies" onPress={fetchtMovies} />
         <View style={styles.linksRow}>
           <Link href="/signup">Sign Up</Link>
           <Link href="/about">About</Link>
