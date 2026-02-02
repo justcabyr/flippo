@@ -22,15 +22,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     } = supabase.auth.onAuthStateChange((event, session) => {
       // console.log(event, { session: !!session });
 
-      if (session?.user) {
-        // console.log("user: ", session?.user.user_metadata);
+      setTimeout(async () => {
+        if (session?.user) {
+          // console.log("user: ", session?.user.user_metadata);
 
-        const email = session.user.email!;
-        const name = session.user.user_metadata.display_name;
-        setUser({ email, name });
-      } else {
-        setUser(null);
-      }
+          const { data } = await supabase.from("users").select().eq("id", session.user.id).single();
+
+          console.log("user: ", data);
+          const email = session.user.email!;
+          const name = session.user.user_metadata.display_name;
+          setUser({ email, name });
+        } else {
+          setUser(null);
+        }
+      });
     });
 
     return () => subscription.unsubscribe();
@@ -49,7 +54,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const signup = async (email: string, password: string, name: string) => {
-    const { error } = await supabase.auth.signUp({
+    const { data, error } = await supabase.auth.signUp({
       email,
       password,
       options: {
@@ -59,6 +64,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       },
     });
     if (error) throw error;
+
+    if (data.user) {
+      const { error } = await supabase.from("users").insert({
+        id: data.user.id,
+        email: data.user.email,
+        display_name: data.user.user_metadata.display_name,
+      });
+      if (error) throw error;
+    }
   };
 
   return (

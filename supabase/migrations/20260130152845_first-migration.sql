@@ -30,3 +30,42 @@ create policy "Allow delete for authenticated users"
 on public.movies for delete
 to authenticated
 using (true);
+
+
+
+-- public.users table
+
+create table public.users (
+  id uuid references auth.users on delete cascade primary key,
+  email text,
+  display_name text,
+  updated_at timestamp with time zone default timezone('utc'::text, now()) not null,
+  created_at timestamp with time zone default timezone('utc'::text, now()) not null
+);
+
+alter table public.users enable row level security;
+
+-- READ: Allow authenticated users to view all user profiles
+create policy "Users can select" 
+on public.users for select 
+to authenticated 
+using ((select auth.uid()) = id);
+
+-- INSERT: Allow users to insert only their own profile
+create policy "Users can insert" 
+on public.users for insert 
+to authenticated 
+with check ((select auth.uid()) = id);
+
+-- UPDATE: Allow users to update only their own profile
+create policy "Users can update" 
+on public.users for update 
+to authenticated 
+using ((select auth.uid()) = id)
+with check ((select auth.uid()) = id);
+
+-- DELETE: Allow users to delete only their own profile
+create policy "Users can delete" 
+on public.users for delete 
+to authenticated 
+using ((select auth.uid()) = id);

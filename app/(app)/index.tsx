@@ -38,8 +38,8 @@ export default function Index() {
   return (
     <Screen>
       <Card>
-        <Title>{`Hello, ${user!.name}`}</Title>
-        <Subtitle>You are logged in</Subtitle>
+        <Title>Welcome to Flippo</Title>
+        <Subtitle>{`You are logged in as, ${user!.name}`}</Subtitle>
         <Button title="Logout" onPress={handleLogout} />
         <Button title="Insert movies" onPress={insertMovies} />
         <Button title="Fetch movies" onPress={fetchtMovies} />
