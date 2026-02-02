@@ -69,3 +69,30 @@ create policy "Users can delete"
 on public.users for delete 
 to authenticated 
 using ((select auth.uid()) = id);
+
+
+-- Trigger function 
+
+create or replace function public.handle_new_user()
+returns trigger 
+language plpgsql 
+security definer 
+set search_path = ''
+as $$
+begin
+  insert into public.users (id, email, display_name)
+  values (
+    new.id, 
+    new.email, 
+    new.raw_user_meta_data->>'display_name'
+  );
+  return new;
+end;
+$$;
+
+-- Drop and recreate the trigger
+drop trigger if exists on_auth_user_created on auth.users;
+
+create trigger on_auth_user_created
+  after insert on auth.users
+  for each row execute procedure public.handle_new_user();
