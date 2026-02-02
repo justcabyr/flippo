@@ -1,7 +1,6 @@
 import { supabase } from "@/lib/supabase";
+import { User } from "@/lib/types";
 import { createContext, ReactNode, useContext, useEffect, useState } from "react";
-
-type User = { email: string; name: string };
 
 interface AuthContextType {
   user: User | null;
@@ -22,12 +21,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     } = supabase.auth.onAuthStateChange((event, session) => {
       setTimeout(async () => {
         if (session?.user) {
-          const { data } = await supabase.from("users").select().eq("id", session.user.id).single();
-
-          console.log("user: ", data);
-          const email = data.email!;
-          const name = data.display_name;
-          setUser({ email, name });
+          const { data: user } = await supabase
+            .from("users")
+            .select()
+            .eq("id", session.user.id)
+            .single();
+            
+          setUser(user);
         } else {
           setUser(null);
         }
