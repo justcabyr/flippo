@@ -2,11 +2,22 @@ import { Button, Card, Link, Screen, Subtitle, Title } from "@/components/ui";
 import { Theme, useTheme } from "@/constants/theme";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/lib/supabase";
+import { useEffect, useState } from "react";
 import { Alert, StyleSheet, View } from "react-native";
 
 export default function Index() {
   const { user, logout } = useAuth();
   const { styles } = useTheme(makeStyles);
+  const [movies, setMovies] = useState<any[]>([]);
+
+  const updateMovies = async () => {
+    const { data } = await supabase.from("movies").select();
+    setMovies(data || []);
+  };
+
+  useEffect(() => {
+    updateMovies();
+  }, []);
 
   const handleLogout = async () => {
     try {
@@ -20,17 +31,10 @@ export default function Index() {
     const { data, error } = await supabase
       .from("movies")
       .insert({
-        name: "The New One",
+        name: "The third One",
         description: "Stalker begins Jedi training with Yoda.",
       })
       .select();
-    console.log(data);
-    if (error) console.error(error);
-  };
-
-  const fetchtMovies = async () => {
-    // const { data, error } = await supabase.from("movies").select().eq("id", 3).single();
-    const { data, error } = await supabase.from("movies").select();
     console.log(data);
     if (error) console.error(error);
   };
@@ -39,10 +43,11 @@ export default function Index() {
     <Screen>
       <Card>
         <Title>Welcome to Flippo</Title>
-        <Subtitle>{`You are logged in as, ${user!.name}`}</Subtitle>
+        <Subtitle>{`You are logged in as, ${user?.display_name}`}</Subtitle>
+        <Subtitle>{`There are ${movies.length} movies`}</Subtitle>
         <Button title="Logout" onPress={handleLogout} />
         <Button title="Insert movies" onPress={insertMovies} />
-        <Button title="Fetch movies" onPress={fetchtMovies} />
+        <Button title="Update movies" onPress={updateMovies} />
         <View style={styles.linksRow}>
           <Link href="/profile">Profile</Link>
         </View>
