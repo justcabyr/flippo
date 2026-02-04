@@ -1,5 +1,5 @@
 import { supabase } from "@/lib/supabase";
-import { User } from "@/lib/types";
+import { User } from "@/db/types";
 import { createContext, ReactNode, useContext, useEffect, useState } from "react";
 
 interface AuthContextType {

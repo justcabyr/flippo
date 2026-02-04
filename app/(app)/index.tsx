@@ -1,7 +1,7 @@
 import { Button, Card, Link, Screen, Subtitle, Title } from "@/components/ui";
 import { Theme, useTheme } from "@/constants/theme";
 import { useAuth } from "@/contexts/AuthContext";
-import { supabase } from "@/lib/supabase";
+import { fetchMovies, insertMovies } from "@/db/movies";
 import { useEffect, useState } from "react";
 import { Alert, StyleSheet, View } from "react-native";
 
@@ -11,8 +11,13 @@ export default function Index() {
   const [movies, setMovies] = useState<any[]>([]);
 
   const updateMovies = async () => {
-    const { data } = await supabase.from("movies").select();
-    setMovies(data || []);
+    const movies = await fetchMovies();
+    setMovies(movies);
+  };
+
+  const insertMovie = async () => {
+    await insertMovies("The last one", "This is a subtitle");
+    await updateMovies();
   };
 
   useEffect(() => {
@@ -27,18 +32,6 @@ export default function Index() {
     }
   };
 
-  const insertMovies = async () => {
-    const { data, error } = await supabase
-      .from("movies")
-      .insert({
-        name: "The third One",
-        description: "Stalker begins Jedi training with Yoda.",
-      })
-      .select();
-    console.log(data);
-    if (error) console.error(error);
-  };
-
   return (
     <Screen>
       <Card>
@@ -46,7 +39,7 @@ export default function Index() {
         <Subtitle>{`You are logged in as, ${user?.display_name}`}</Subtitle>
         <Subtitle>{`There are ${movies.length} movies`}</Subtitle>
         <Button title="Logout" onPress={handleLogout} />
-        <Button title="Insert movies" onPress={insertMovies} />
+        <Button title="Insert movies" onPress={insertMovie} />
         <Button title="Update movies" onPress={updateMovies} />
         <View style={styles.linksRow}>
           <Link href="/profile">Profile</Link>
