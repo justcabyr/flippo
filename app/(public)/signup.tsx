@@ -1,55 +1,43 @@
 import { Button, Card, Input, Link, Screen, Subtitle, Title } from "@/components/ui";
 import { Theme, useTheme } from "@/constants/theme";
 import { useAuth } from "@/contexts/AuthContext";
-import { supabase } from "@/lib/supabase";
 import { useState } from "react";
 import { Alert, StyleSheet, View } from "react-native";
 
-export default function Index() {
+export default function Signup() {
   const [email, setEmail] = useState("test@test.com");
   const [password, setPassword] = useState("password");
+  const [name, setName] = useState("Test");
 
-  const { login } = useAuth();
+  const { signup } = useAuth();
   const { styles } = useTheme(makeStyles);
 
-  const handleLogin = async () => {
+  const handleSignup = async () => {
     try {
-      if (email && password) {
-        await login(email, password);
+      if (email && password && name) {
+        await signup(email, password, name);
         // Optional: Alert.alert("Success", "Logged in!");
       }
     } catch (error: any) {
-      Alert.alert("Login Failed", error.message);
+      console.error("email:", error);
+      Alert.alert("Sign up Failed", error.message);
     }
   };
-
-    const fetchtMovies = async () => {
-      // const { data, error } = await supabase.from("movies").select().eq("id", 3).single();
-      const { data, error } = await supabase.from("movies").select();
-      console.log(data);
-      if (error) console.error(error);
-    };
 
   return (
     <Screen>
       <Card>
         <Title>Welcome to Flippo</Title>
-        <Subtitle>Please log in to continue</Subtitle>
+        <Subtitle>Please sign up to continue</Subtitle>
 
-        <Input
-          placeholder="Email"
-          value={email}
-          onChangeText={setEmail}
-          autoCapitalize="none"
-          autoCorrect={false}
-        />
+        <Input placeholder="Email" value={email} onChangeText={setEmail} autoCapitalize="none" autoCorrect={false}/>
         <Input placeholder="Password" secureTextEntry value={password} onChangeText={setPassword} />
+        <Input placeholder="Name" value={name} onChangeText={setName} autoComplete="off" />
 
-        <Button title="Login" onPress={handleLogin} />
-        <Button title="Fetch movies" onPress={fetchtMovies} />
+        <Button title="Sign up" onPress={handleSignup} />
+
         <View style={styles.linksRow}>
-          <Link href="/signup">Sign Up</Link>
-          <Link href="/about">About</Link>
+          <Link href="/">Already have an account? Log In</Link>
         </View>
       </Card>
     </Screen>
