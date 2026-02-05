@@ -9,12 +9,11 @@ export default function Index() {
   const { styles } = useTheme(makeStyles);
   const { mutate } = useInsertMovie();
 
-  const { data: movies, isPending, error } = useMovies();
-  console.log(movies, isPending, error);
+  const { data: movies } = useMovies();
 
   const handleLogout = async () => {
     try {
-      await logout(); // Now returns a Promise
+      await logout();
     } catch (error: any) {
       Alert.alert("Logout Error", error.message);
     }
