@@ -1,5 +1,6 @@
-import { supabase } from "@/lib/supabase";
 import { User } from "@/db/types";
+import { supabase } from "@/lib/supabase";
+import { useQueryClient } from "@tanstack/react-query";
 import { createContext, ReactNode, useContext, useEffect, useState } from "react";
 
 interface AuthContextType {
@@ -13,6 +14,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
+  const queryClient = useQueryClient();
 
   useEffect(() => {
     // 1. Sync session on load and on any auth change
@@ -26,7 +28,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             .select()
             .eq("id", session.user.id)
             .single();
-            
+
           setUser(user);
         } else {
           setUser(null);
@@ -46,6 +48,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   // 3. Logout using Supabase signOut
   const logout = async () => {
     const { error } = await supabase.auth.signOut();
+    queryClient.clear();
     if (error) throw error;
   };
 
