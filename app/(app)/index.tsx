@@ -1,48 +1,36 @@
 import { Button, Card, Link, Screen, Subtitle, Title } from "@/components/ui";
 import { Theme, useTheme } from "@/constants/theme";
 import { useAuth } from "@/contexts/AuthContext";
-import { supabase } from "@/lib/supabase";
+import { useInsertMovie, useMovies } from "@/db/hooks/useMovies";
 import { Alert, StyleSheet, View } from "react-native";
 
 export default function Index() {
   const { user, logout } = useAuth();
   const { styles } = useTheme(makeStyles);
+  const { mutate } = useInsertMovie();
+
+  const { data: movies } = useMovies();
 
   const handleLogout = async () => {
     try {
-      await logout(); // Now returns a Promise
+      await logout();
     } catch (error: any) {
       Alert.alert("Logout Error", error.message);
     }
   };
 
-  const insertMovies = async () => {
-    const { data, error } = await supabase
-      .from("movies")
-      .insert({
-        name: "The New One",
-        description: "Stalker begins Jedi training with Yoda.",
-      })
-      .select();
-    console.log(data);
-    if (error) console.error(error);
-  };
-
-  const fetchtMovies = async () => {
-    // const { data, error } = await supabase.from("movies").select().eq("id", 3).single();
-    const { data, error } = await supabase.from("movies").select();
-    console.log(data);
-    if (error) console.error(error);
+  const insertMovie = async () => {
+    mutate({ name: "The last one", description: "This is a subtitle" });
   };
 
   return (
     <Screen>
       <Card>
         <Title>Welcome to Flippo</Title>
-        <Subtitle>{`You are logged in as, ${user!.name}`}</Subtitle>
+        <Subtitle>{`You are logged in as, ${user?.display_name}`}</Subtitle>
+        <Subtitle>{`There are ${movies?.length} movies`}</Subtitle>
         <Button title="Logout" onPress={handleLogout} />
-        <Button title="Insert movies" onPress={insertMovies} />
-        <Button title="Fetch movies" onPress={fetchtMovies} />
+        <Button title="Insert movies" onPress={insertMovie} />
         <View style={styles.linksRow}>
           <Link href="/profile">Profile</Link>
         </View>

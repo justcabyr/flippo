@@ -24,7 +24,6 @@ export default function Index() {
   };
 
     const fetchtMovies = async () => {
-      // const { data, error } = await supabase.from("movies").select().eq("id", 3).single();
       const { data, error } = await supabase.from("movies").select();
       console.log(data);
       if (error) console.error(error);

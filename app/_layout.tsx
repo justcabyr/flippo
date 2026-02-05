@@ -1,11 +1,23 @@
-import { AuthProvider, useAuth } from '@/contexts/AuthContext';
-import { Stack } from 'expo-router';
+import { AuthProvider, useAuth } from "@/contexts/AuthContext";
+import { Stack } from "expo-router";
+
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 2 * 60 * 1000,
+    },
+  },
+});
 
 export default function RootLayout() {
   return (
-    <AuthProvider>
-      <App />
-    </AuthProvider>
+    <QueryClientProvider client={queryClient}>
+      <AuthProvider>
+        <App />
+      </AuthProvider>
+    </QueryClientProvider>
   );
 }
 
