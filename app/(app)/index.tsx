@@ -1,7 +1,8 @@
 import { Button, Card, Input, Screen, Subtitle, Title } from "@/components/ui";
 import { Theme, useTheme } from "@/constants/theme";
 import { useAuth } from "@/contexts/AuthContext";
-import { supabase } from "@/lib/supabase"; // Ensure you import your supabase client
+import { addFriend } from "@/db/rpc";
+import { getFriends } from "@/db/users";
 import { useState } from "react"; // Added useState
 import { Alert, StyleSheet, View } from "react-native";
 
@@ -24,13 +25,7 @@ export default function Index() {
     setLoading(true);
 
     try {
-      // We call the 'rpc' method and pass the parameter expected by the SQL function
-      const { error } = await supabase.rpc("add_friend", {
-        friend_id: friendId,
-      });
-
-      if (error) throw error;
-
+      await addFriend(friendId);
       Alert.alert("Success", "Friendship created!");
       setFriendId("");
     } catch (error: any) {
@@ -40,11 +35,10 @@ export default function Index() {
     }
   };
 
-    const handleGetFriends = async () => {
-      const { data, error } = await supabase.from("users").select().neq("id", user!.id);
-      console.log(data, error);
-      // console.log(data?.length, error);
-    };
+  const handleGetFriends = async () => {
+    const friends = await getFriends(user!.id);
+    console.log(friends);
+  };
 
   return (
     <Screen>
