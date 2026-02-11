@@ -40,6 +40,12 @@ export default function Index() {
     }
   };
 
+    const handleGetFriends = async () => {
+      const { data, error } = await supabase.from("users").select().neq("id", user!.id);
+      console.log(data, error);
+      // console.log(data?.length, error);
+    };
+
   return (
     <Screen>
       <Card>
@@ -48,11 +54,8 @@ export default function Index() {
 
         <View style={styles.friendSection}>
           <Input placeholder="Enter Friend UUID" value={friendId} onChangeText={setFriendId} />
-          <Button
-            title={loading ? "Adding..." : "Add Friend"}
-            onPress={handleAddFriend}
-            // disabled={loading}
-          />
+          <Button title={loading ? "Adding..." : "Add Friend"} onPress={handleAddFriend} />
+          <Button title="Get friends" onPress={handleGetFriends} />
         </View>
 
         <Button title="Logout" onPress={handleLogout} />
