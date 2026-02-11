@@ -1,4 +1,5 @@
 import { User } from "@/db/types";
+import { fetchUser } from "@/db/users";
 import { supabase } from "@/lib/supabase";
 import { useQueryClient } from "@tanstack/react-query";
 import { createContext, ReactNode, useContext, useEffect, useState } from "react";
@@ -23,12 +24,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     } = supabase.auth.onAuthStateChange((event, session) => {
       setTimeout(async () => {
         if (session?.user) {
-          const { data: user } = await supabase
-            .from("users")
-            .select()
-            .eq("id", session.user.id)
-            .single();
-
+          const user = await fetchUser(session.user.id);
           setUser(user);
         } else {
           setUser(null);

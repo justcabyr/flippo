@@ -1,15 +1,17 @@
-import { Button, Card, Link, Screen, Subtitle, Title } from "@/components/ui";
+import { Body, Button, Card, Input, Screen, Subtitle, Title } from "@/components/ui";
 import { Theme, useTheme } from "@/constants/theme";
 import { useAuth } from "@/contexts/AuthContext";
-import { useInsertMovie, useMovies } from "@/db/hooks/useMovies";
+import { useAddFriend, useFriends } from "@/db/hooks/useFriends";
+import { useState } from "react";
 import { Alert, StyleSheet, View } from "react-native";
 
 export default function Index() {
   const { user, logout } = useAuth();
   const { styles } = useTheme(makeStyles);
-  const { mutate } = useInsertMovie();
+  const [friendId, setFriendId] = useState("");
 
-  const { data: movies } = useMovies();
+  const { data: friends } = useFriends();
+  const { mutate: insertFriend } = useAddFriend();
 
   const handleLogout = async () => {
     try {
@@ -19,8 +21,16 @@ export default function Index() {
     }
   };
 
-  const insertMovie = async () => {
-    mutate({ name: "The last one", description: "This is a subtitle" });
+  const handleAddFriend = async () => {
+    insertFriend(friendId, {
+      onSuccess: () => {
+        Alert.alert("Success", "Friendship created!");
+        setFriendId("");
+      },
+      onError: (e) => {
+        Alert.alert("Error", e.message);
+      },
+    });
   };
 
   return (
@@ -28,12 +38,14 @@ export default function Index() {
       <Card>
         <Title>Welcome to Flippo</Title>
         <Subtitle>{`You are logged in as, ${user?.display_name}`}</Subtitle>
-        <Subtitle>{`There are ${movies?.length} movies`}</Subtitle>
-        <Button title="Logout" onPress={handleLogout} />
-        <Button title="Insert movies" onPress={insertMovie} />
-        <View style={styles.linksRow}>
-          <Link href="/profile">Profile</Link>
+        <Body>{`You have ${friends?.length} friends`}</Body>
+
+        <View style={styles.friendSection}>
+          <Input placeholder="Enter Friend UUID" value={friendId} onChangeText={setFriendId} />
+          <Button title="Add Friend" onPress={handleAddFriend} />
         </View>
+
+        <Button title="Logout" onPress={handleLogout} />
       </Card>
     </Screen>
   );
@@ -41,6 +53,10 @@ export default function Index() {
 
 const makeStyles = (theme: Theme) =>
   StyleSheet.create({
+    friendSection: {
+      marginVertical: theme.spacing.lg,
+      gap: 10,
+    },
     linksRow: {
       flexDirection: "row",
       gap: 10,

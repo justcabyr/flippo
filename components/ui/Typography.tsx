@@ -10,15 +10,19 @@ type TypographyProps = {
 export function Title({ children, style }: TypographyProps) {
   const { theme } = useTheme(makeStyles);
   const styles = makeStyles(theme);
-
   return <Text style={[styles.title, style]}>{children}</Text>;
 }
 
 export function Subtitle({ children, style }: TypographyProps) {
   const { theme } = useTheme(makeStyles);
   const styles = makeStyles(theme);
-
   return <Text style={[styles.subtitle, style]}>{children}</Text>;
+}
+
+export function Body({ children, style }: TypographyProps) {
+  const { theme } = useTheme(makeStyles);
+  const styles = makeStyles(theme);
+  return <Text style={[styles.body, style]}>{children}</Text>;
 }
 
 const makeStyles = (theme: Theme) =>
@@ -35,5 +39,11 @@ const makeStyles = (theme: Theme) =>
       textAlign: "center",
       marginBottom: theme.spacing.xl,
       color: theme.colors.subtitle,
+    },
+    body: {
+      fontSize: 16,
+      lineHeight: 24,
+      color: theme.colors.text,
+      marginBottom: theme.spacing.md,
     },
   });
