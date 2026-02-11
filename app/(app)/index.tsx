@@ -1,4 +1,4 @@
-import { Button, Card, Input, Screen, Subtitle, Title } from "@/components/ui";
+import { Body, Button, Card, Input, Screen, Subtitle, Title } from "@/components/ui";
 import { Theme, useTheme } from "@/constants/theme";
 import { useAuth } from "@/contexts/AuthContext";
 import { useAddFriend, useFriends } from "@/db/hooks/useFriends";
@@ -38,7 +38,7 @@ export default function Index() {
       <Card>
         <Title>Welcome to Flippo</Title>
         <Subtitle>{`You are logged in as, ${user?.display_name}`}</Subtitle>
-        <Subtitle>{`You have ${friends?.length} friends`}</Subtitle>
+        <Body>{`You have ${friends?.length} friends`}</Body>
 
         <View style={styles.friendSection}>
           <Input placeholder="Enter Friend UUID" value={friendId} onChangeText={setFriendId} />
