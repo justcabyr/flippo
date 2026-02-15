@@ -3,4 +3,4 @@ export { default as Card } from "./Card";
 export { default as Input } from "./Input";
 export { default as Screen } from "./Screen";
 export { default as Button } from "./Button";
-export { Title, Subtitle } from "./Typography";
+export { Title, Subtitle, Body } from "./Typography";

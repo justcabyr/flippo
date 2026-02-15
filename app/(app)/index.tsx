@@ -1,51 +1,51 @@
-import { Button, Card, Link, Screen, Subtitle, Title } from "@/components/ui";
+import { Body, Button, Card, Input, Screen, Subtitle, Title } from "@/components/ui";
 import { Theme, useTheme } from "@/constants/theme";
 import { useAuth } from "@/contexts/AuthContext";
-import { supabase } from "@/lib/supabase";
+import { useAddFriend, useFriends } from "@/db/hooks/useFriends";
+import { useState } from "react";
 import { Alert, StyleSheet, View } from "react-native";
 
 export default function Index() {
   const { user, logout } = useAuth();
   const { styles } = useTheme(makeStyles);
+  const [friendId, setFriendId] = useState("");
+
+  const { data: friends } = useFriends();
+  const { mutate: insertFriend } = useAddFriend();
 
   const handleLogout = async () => {
     try {
-      await logout(); // Now returns a Promise
+      await logout();
     } catch (error: any) {
       Alert.alert("Logout Error", error.message);
     }
   };
 
-  const insertMovies = async () => {
-    const { data, error } = await supabase
-      .from("movies")
-      .insert({
-        name: "The New One",
-        description: "Stalker begins Jedi training with Yoda.",
-      })
-      .select();
-    console.log(data);
-    if (error) console.error(error);
-  };
-
-  const fetchtMovies = async () => {
-    // const { data, error } = await supabase.from("movies").select().eq("id", 3).single();
-    const { data, error } = await supabase.from("movies").select();
-    console.log(data);
-    if (error) console.error(error);
+  const handleAddFriend = async () => {
+    insertFriend(friendId, {
+      onSuccess: () => {
+        Alert.alert("Success", "Friendship created!");
+        setFriendId("");
+      },
+      onError: (e) => {
+        Alert.alert("Error", e.message);
+      },
+    });
   };
 
   return (
     <Screen>
       <Card>
         <Title>Welcome to Flippo</Title>
-        <Subtitle>{`You are logged in as, ${user!.name}`}</Subtitle>
-        <Button title="Logout" onPress={handleLogout} />
-        <Button title="Insert movies" onPress={insertMovies} />
-        <Button title="Fetch movies" onPress={fetchtMovies} />
-        <View style={styles.linksRow}>
-          <Link href="/profile">Profile</Link>
+        <Subtitle>{`You are logged in as, ${user?.display_name}`}</Subtitle>
+        <Body>{`You have ${friends?.length} friends`}</Body>
+
+        <View style={styles.friendSection}>
+          <Input placeholder="Enter Friend UUID" value={friendId} onChangeText={setFriendId} />
+          <Button title="Add Friend" onPress={handleAddFriend} />
         </View>
+
+        <Button title="Logout" onPress={handleLogout} />
       </Card>
     </Screen>
   );
@@ -53,6 +53,10 @@ export default function Index() {
 
 const makeStyles = (theme: Theme) =>
   StyleSheet.create({
+    friendSection: {
+      marginVertical: theme.spacing.lg,
+      gap: 10,
+    },
     linksRow: {
       flexDirection: "row",
       gap: 10,
