@@ -1,41 +1,60 @@
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2"
 
 Deno.serve(async () => {
   try {
-    // 1. Initialize Supabase Client with Service Role Key
-    // Note: Use the Service Role Key to bypass rate limits and email confirmation
     const supabaseAdmin = createClient(
-      Deno.env.get("SUPABASE_URL") ?? "",
-      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "",
-    );
+      Deno.env.get('SUPABASE_URL') ?? '',
+      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
+    )
 
-    const usersToCreate = 10;
-    const results = [];
+    // --- 1. DELETE ALL EXISTING USERS ---
+    const { data: { users: existingUsers }, error: listError } = await supabaseAdmin.auth.admin.listUsers()
+    if (listError) throw listError
 
-    // 2. Loop to create 10 users
-    for (let i = 1; i <= usersToCreate; i++) {
+    for (const user of existingUsers) {
+      await supabaseAdmin.auth.admin.deleteUser(user.id)
+    }
+
+    // --- 2. CREATE 10 NEW USERS ---
+    const newUsers = []
+    for (let i = 1; i <= 10; i++) {
       const { data, error } = await supabaseAdmin.auth.admin.createUser({
         email: `user${i}@example.com`,
-        password: "password123",
-        user_metadata: {
-          display_name: `User ${i}`,
-          is_seeded: true,
-        },
-        email_confirm: true, // Automatically confirms the email
-      });
+        password: 'password123',
+        user_metadata: { display_name: `User ${i}` },
+        email_confirm: true
+      })
+      if (error) throw error
+      newUsers.push(data.user)
+    }
 
-      if (error) throw error;
-      results.push(data.user);
+    // --- 3. ADD 3 FRIENDSHIPS ---
+    // We'll link User 1 with Users 2, 3, 4, 5 and 6
+    const user1 = newUsers[0]
+    const friendsToMake = [newUsers[1], newUsers[2], newUsers[3], newUsers[4], newUsers[5]];
+
+    for (const friend of friendsToMake) {
+      // We manually implement the LEAST/GREATEST logic here to satisfy your DB constraint
+      const [user_a, user_b] = [user1.id, friend.id].sort()
+
+      const { error: friendError } = await supabaseAdmin
+        .from('friendships')
+        .insert({ user_a, user_b })
+
+      if (friendError) throw friendError
     }
 
     return new Response(
-      JSON.stringify({ message: `${results.length} users created successfully` }),
-      { headers: { "Content-Type": "application/json" }, status: 200 },
-    );
+      JSON.stringify({ 
+        message: "Database reset: Users deleted, 10 created, 5 friendships established." 
+      }),
+      { headers: { "Content-Type": "application/json" }, status: 200 }
+    )
+
   } catch (err: any) {
-    return new Response(JSON.stringify({ error: err.message }), {
-      headers: { "Content-Type": "application/json" },
-      status: 400,
-    });
+    return new Response(
+      JSON.stringify({ error: err.message }),
+      { headers: { "Content-Type": "application/json" }, status: 400 }
+    )
   }
-});
+})
