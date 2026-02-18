@@ -25,13 +25,17 @@ export default function Index() {
 
   return (
     <Screen>
-      <Card style={styles.headerCard}>
+      <Card style={[styles.headerCard, user!.current_color && {backgroundColor: user!.current_color}]}>
         <Title>Welcome, {user?.display_name || "User"}</Title>
         <Subtitle>Manage your connections below.</Subtitle>
         <View style={styles.friendSection}>
           <Input placeholder="Enter Friend UUID" value={friendId} onChangeText={setFriendId} />
           <Button title="Add Friend" onPress={handleAddFriend} />
         </View>
+
+        <Link href="/pick" style={styles.profileLink}>
+          Pick a color!
+        </Link>
 
         {/* Constrained list container */}
         <View style={{ height: "30%" }}>
