@@ -34,7 +34,7 @@ export default function Index() {
         </View>
 
         {/* Constrained list container */}
-        <View style={{ height: "25%" }}>
+        <View style={{ height: "30%" }}>
           <FlatList
             data={friends}
             ItemSeparatorComponent={() => (
@@ -42,7 +42,7 @@ export default function Index() {
             )}
             keyExtractor={(item, index) => item.id || index.toString()}
             renderItem={({ item }) => (
-              <View style={styles.friendRow}>
+              <View style={[styles.friendRow, item.current_color && {backgroundColor: item.current_color}]}>
                 <Body style={styles.uuidText}>{item.display_name}</Body>
               </View>
             )}
