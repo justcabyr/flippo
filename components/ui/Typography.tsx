@@ -1,6 +1,6 @@
 // components/typography.tsx
-import { Text, StyleSheet } from "react-native";
-import { useTheme, Theme } from "@/constants/theme";
+import { Theme, useTheme } from "@/constants/theme";
+import { StyleSheet, Text } from "react-native";
 
 type TypographyProps = {
   children: React.ReactNode;
@@ -41,9 +41,10 @@ const makeStyles = (theme: Theme) =>
       color: theme.colors.subtitle,
     },
     body: {
-      fontSize: 16,
-      lineHeight: 24,
+      fontSize: 12,
+      lineHeight: 18,
       color: theme.colors.text,
-      marginBottom: theme.spacing.md,
+      marginBottom: theme.spacing.sm,
+      marginLeft: theme.spacing.xs,
     },
   });
