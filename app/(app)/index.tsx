@@ -1,4 +1,4 @@
-import { Body, Button, Card, Input, Screen, Subtitle, Title } from "@/components/ui";
+import { Body, Button, Card, Input, Link, Screen, Subtitle, Title } from "@/components/ui";
 import { Theme, useTheme } from "@/constants/theme";
 import { useAuth } from "@/contexts/AuthContext";
 import { useAddFriend, useFriends } from "@/db/hooks/useFriends";
@@ -6,20 +6,12 @@ import { useState } from "react";
 import { Alert, StyleSheet, View } from "react-native";
 
 export default function Index() {
-  const { user, logout } = useAuth();
+  const { user } = useAuth();
   const { styles } = useTheme(makeStyles);
   const [friendId, setFriendId] = useState("");
 
   const { data: friends } = useFriends();
   const { mutate: insertFriend } = useAddFriend();
-
-  const handleLogout = async () => {
-    try {
-      await logout();
-    } catch (error: any) {
-      Alert.alert("Logout Error", error.message);
-    }
-  };
 
   const handleAddFriend = async () => {
     insertFriend(friendId, {
@@ -45,7 +37,9 @@ export default function Index() {
           <Button title="Add Friend" onPress={handleAddFriend} />
         </View>
 
-        <Button title="Logout" onPress={handleLogout} />
+        <View style={styles.linksRow}>
+          <Link href="/profile">Profile</Link>
+        </View>
       </Card>
     </Screen>
   );
