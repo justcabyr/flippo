@@ -1,25 +1,17 @@
-import { Body, Button, Card, Input, Screen, Subtitle, Title } from "@/components/ui";
+import { Body, Button, Card, Input, Link, Screen, Subtitle, Title } from "@/components/ui";
 import { Theme, useTheme } from "@/constants/theme";
 import { useAuth } from "@/contexts/AuthContext";
 import { useAddFriend, useFriends } from "@/db/hooks/useFriends";
 import { useState } from "react";
-import { Alert, StyleSheet, View } from "react-native";
+import { Alert, FlatList, StyleSheet, View } from "react-native";
 
 export default function Index() {
-  const { user, logout } = useAuth();
+  const { user } = useAuth();
   const { styles } = useTheme(makeStyles);
   const [friendId, setFriendId] = useState("");
 
   const { data: friends } = useFriends();
   const { mutate: insertFriend } = useAddFriend();
-
-  const handleLogout = async () => {
-    try {
-      await logout();
-    } catch (error: any) {
-      Alert.alert("Logout Error", error.message);
-    }
-  };
 
   const handleAddFriend = async () => {
     insertFriend(friendId, {
@@ -27,25 +19,45 @@ export default function Index() {
         Alert.alert("Success", "Friendship created!");
         setFriendId("");
       },
-      onError: (e) => {
-        Alert.alert("Error", e.message);
-      },
+      onError: (e) => Alert.alert("Error", e.message),
     });
   };
 
   return (
     <Screen>
-      <Card>
-        <Title>Welcome to Flippo</Title>
-        <Subtitle>{`You are logged in as, ${user?.display_name}`}</Subtitle>
-        <Body>{`You have ${friends?.length} friends`}</Body>
-
+      <Card style={[styles.headerCard, user!.current_color && {backgroundColor: user!.current_color}]}>
+        <Title>Welcome, {user?.display_name || "User"}</Title>
+        <Subtitle>Manage your connections below.</Subtitle>
         <View style={styles.friendSection}>
           <Input placeholder="Enter Friend UUID" value={friendId} onChangeText={setFriendId} />
           <Button title="Add Friend" onPress={handleAddFriend} />
         </View>
 
-        <Button title="Logout" onPress={handleLogout} />
+        <Link href="/pick" style={styles.profileLink}>
+          Pick a color!
+        </Link>
+
+        {/* Constrained list container */}
+        <View style={{ height: "30%" }}>
+          <FlatList
+            data={friends}
+            ItemSeparatorComponent={() => (
+              <View style={{ height: 10, backgroundColor: "yellow" }}></View>
+            )}
+            keyExtractor={(item, index) => item.id || index.toString()}
+            renderItem={({ item }) => (
+              <View style={[styles.friendRow, item.current_color && {backgroundColor: item.current_color}]}>
+                <Body style={styles.uuidText}>{item.display_name}</Body>
+              </View>
+            )}
+            ListEmptyComponent={<Body style={styles.emptyText}>No friends in your list yet.</Body>}
+            style={styles.list}
+          />
+        </View>
+
+        <Link href="/profile" style={styles.profileLink}>
+          View Profile
+        </Link>
       </Card>
     </Screen>
   );
@@ -53,14 +65,35 @@ export default function Index() {
 
 const makeStyles = (theme: Theme) =>
   StyleSheet.create({
-    friendSection: {
-      marginVertical: theme.spacing.lg,
+    headerCard: {
+      margin: theme.spacing.md,
       gap: 10,
     },
-    linksRow: {
-      flexDirection: "row",
+    friendSection: {
+      marginTop: theme.spacing.md,
       gap: 10,
-      justifyContent: "center",
-      marginTop: theme.spacing.lg,
+    },
+    profileLink: {
+      textAlign: "center",
+      marginTop: theme.spacing.sm,
+    },
+    list: {
+      borderColor: "red",
+      borderWidth: 1,
+      marginTop: theme.spacing.sm,
+    },
+    friendRow: {
+      paddingVertical: theme.spacing.xs,
+      borderColor: "blue",
+      borderWidth: 1,
+    },
+    uuidText: {
+      fontSize: 14,
+      opacity: 0.8,
+    },
+    emptyText: {
+      textAlign: "center",
+      marginTop: theme.spacing.md,
+      opacity: 0.5,
     },
   });
