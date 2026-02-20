@@ -39,6 +39,39 @@ export type Database = {
   }
   public: {
     Tables: {
+      friendships: {
+        Row: {
+          created_at: string
+          user_a: string
+          user_b: string
+        }
+        Insert: {
+          created_at?: string
+          user_a: string
+          user_b: string
+        }
+        Update: {
+          created_at?: string
+          user_a?: string
+          user_b?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "friendships_user_a_fkey"
+            columns: ["user_a"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "friendships_user_b_fkey"
+            columns: ["user_b"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       movies: {
         Row: {
           description: string | null
@@ -60,6 +93,7 @@ export type Database = {
       users: {
         Row: {
           created_at: string
+          current_color: string | null
           display_name: string | null
           email: string | null
           id: string
@@ -67,6 +101,7 @@ export type Database = {
         }
         Insert: {
           created_at?: string
+          current_color?: string | null
           display_name?: string | null
           email?: string | null
           id: string
@@ -74,6 +109,7 @@ export type Database = {
         }
         Update: {
           created_at?: string
+          current_color?: string | null
           display_name?: string | null
           email?: string | null
           id?: string
@@ -86,7 +122,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      add_friend: { Args: { friend_id: string }; Returns: undefined }
     }
     Enums: {
       [_ in never]: never

@@ -1,23 +1,49 @@
-import { Button, Screen } from "@/components/ui/";
-import { Subtitle, Title } from "@/components/ui/Typography";
+import { Button, Card, Screen, Subtitle, Title } from "@/components/ui/";
+import { Theme, useTheme } from "@/constants/theme";
 import { useAuth } from "@/contexts/AuthContext";
-import { useInsertMovie, useMovies } from "@/db/hooks/useMovies";
+import { Alert, StyleSheet, View } from "react-native";
 
 export default function Profile() {
-  const { user } = useAuth();
-  const { data: movies } = useMovies();
-  const { mutate } = useInsertMovie();
+  const { user, logout } = useAuth();
+  const { styles } = useTheme(makeStyles);
 
-  const handleInsertMovie = async () => {
-    mutate({ name: "The last one", description: "This is a subtitle" });
+  const handleLogout = async () => {
+    try {
+      await logout();
+    } catch (error: any) {
+      Alert.alert("Logout Error", error.message);
+    }
   };
 
   return (
     <Screen>
-      <Title>Profile Page</Title>
-      <Subtitle>{user!.email}</Subtitle>
-      <Subtitle>{movies?.length}</Subtitle>
-      <Button title="Insert movies" onPress={handleInsertMovie} />
+      <Card>
+        <Title>Profile Page</Title>
+        <Subtitle>{user?.display_name || "User"}</Subtitle>
+
+        <View style={styles.infoSection}>
+          <Subtitle style={styles.emailText}>{user?.email}</Subtitle>
+        </View>
+
+        <View style={styles.actionSection}>
+          <Button title="Logout" onPress={handleLogout} />
+        </View>
+      </Card>
     </Screen>
   );
 }
+
+const makeStyles = (theme: Theme) =>
+  StyleSheet.create({
+    infoSection: {
+      marginVertical: theme.spacing.lg,
+      alignItems: "center",
+    },
+    emailText: {
+      opacity: 0.7,
+    },
+    actionSection: {
+      marginTop: theme.spacing.xl,
+      gap: 10,
+    },
+  });

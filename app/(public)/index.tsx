@@ -6,8 +6,8 @@ import { useState } from "react";
 import { Alert, StyleSheet, View } from "react-native";
 
 export default function Index() {
-  const [email, setEmail] = useState("test@test.com");
-  const [password, setPassword] = useState("password");
+  const [email, setEmail] = useState("user1@example.com");
+  const [password, setPassword] = useState("password123");
 
   const { login } = useAuth();
   const { styles } = useTheme(makeStyles);
